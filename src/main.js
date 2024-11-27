@@ -214,6 +214,20 @@ function KeyRelease(event) {
   }
 }
 
+// Performance Monitoring (optional)
+let lastTime = 0;
+function monitorPerformance(timestamp) {
+  const delta = timestamp - lastTime;
+  if (delta < 1000 / 60) {
+    // Skip frame if too fast (to ensure 60 FPS)
+    window.requestAnimationFrame(monitorPerformance);
+    return;
+  }
+  lastTime = timestamp;
+  update(); // Call the update function if it's time for the next frame
+  window.requestAnimationFrame(monitorPerformance);
+}
+
 // Main Update Function
 function update(){
   updatePlayer();
@@ -221,14 +235,17 @@ function update(){
   updateLaser($container);
   updateEnemyLaser($container);
 
-  window.requestAnimationFrame(update);
-  
   if (STATE.gameOver) {
     document.querySelector(".lose").style.display = "block";
-  } if (STATE.enemies.length == 0) {
+  } 
+  if (STATE.enemies.length == 0) {
     document.querySelector(".win").style.display = "block";
   }
 }
+
+// Main animation loop to run at 60 FPS
+window.requestAnimationFrame(monitorPerformance);
+
 
 // create the enemies row
 function createEnemies($container) {
