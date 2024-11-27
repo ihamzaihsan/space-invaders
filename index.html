@@ -5,29 +5,39 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Invaders</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-     <!-- wrapper for the (game)  -->
     <div class="wrap">
         <header>Space Invaders</header>
-        <!-- the game  -->
         <div class="game-wrapper">
             <div class="main"></div>
-                <div class="lose">
-                    <h1>GAME OVER</h1>
-                    <h2>Better luck next time!</h2>
-                    <button class="btn" onclick="window.location.reload()">Restart</button>
-                </div>
-                <div class="win">
-                    <h1>YOU WIN!</h1>
-                    <h2>Winner</h2>
-                    <button class="btn" onclick="window.location.reload()">Restart</button>
-                </div>
+            <div class="lose">
+                <h1>GAME OVER</h1>
+                <h2>Better luck next time!</h2>
+                <button class="btn" onclick="window.location.reload()">Restart</button>
+            </div>
+            <div class="win">
+                <h1>YOU WIN!</h1>
+                <h2>Winner</h2>
+                <button class="btn" onclick="window.location.reload()">Restart</button>
+            </div>
         </div>
-        <!-- call the main.js -->
-        <script src="src/main.js"></script>
-        <footer></footer>
+
+        <!-- Scoreboard, timer, and lives -->
+        <div id="scoreboard">
+            <div id="score">Score: 0</div>
+            <div id="timer">Time: 0</div>
+            <div id="lives">Lives: 3</div>
+        </div>
+
+        <!-- Pause Menu (Initially hidden) -->
+        <div id="pauseMenu" style="display: none;">
+            <h1>Game Paused</h1>
+            <button onclick="togglePause()">Resume</button>
+        </div>
     </div>
+
+    <script src="src/main.js"></script>
 </body>
 </html>
