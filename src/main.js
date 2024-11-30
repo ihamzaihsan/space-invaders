@@ -277,21 +277,41 @@ function checkGameOver() {
   return false;
 }
 
+// add pause funtion 
+function togglePause() {
+  const pauseMenu = document.getElementById("pauseMenu");
+  if (STATE.paused) {
+    pauseMenu.style.display = "none"; 
+    STATE.paused = false;
+    window.requestAnimationFrame(monitorPerformance); 
+  } else {
+    pauseMenu.style.display = "block"; 
+    STATE.paused = true;
+  }
+}
+
+// Bind 'P' Key to Toggle Pause
+document.addEventListener("keydown", (event) => {
+  if (event.key === "p" || event.key === "P") {
+    togglePause();
+  }
+});
+
 // Main Update Function
 function update() {
+  if (STATE.paused) return;
   updatePlayer();
   updateEnemies($container);
   updateLaser($container);
   updateEnemyLaser($container);
   updateHUD();
-  //updateTimer();
- checkGameOver();
+  checkGameOver();
 }
 
 // Main animation loop to run at 60 FPS
 window.requestAnimationFrame(monitorPerformance);
 
-// create the enemies ro  w
+// create the enemies row
 function createEnemies($container) {
   for (var i = 0; i <= STATE.number_of_enemies / 2; i++) {
     createEnemy($container, i * 80, 100);
