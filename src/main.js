@@ -297,6 +297,43 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+// Restart Game Function
+function restartGame() {
+  // Reset all game state
+  STATE.x_pos = GAME_WIDTH / 2;
+  STATE.y_pos = GAME_HEIGHT - 50;
+  STATE.move_right = false;
+  STATE.move_left = false;
+  STATE.shoot = false;
+  STATE.lasers = [];
+  STATE.enemyLasers = [];
+  STATE.enemies = [];
+  STATE.cooldown = 0;
+  STATE.enemy_cooldown = 0;
+  STATE.gameOver = false;
+  STATE.paused = false;
+  STATE.score = 0;
+  STATE.time = 80;
+  STATE.lives = 3;
+
+  // Clear the game area
+  const $container = document.querySelector(".main");
+  $container.innerHTML = ""; 
+
+  // Recreate player and enemies
+  createPlayer($container);
+  createEnemies($container);
+  startTimer();
+  updateHUD();
+}
+
+// Bind 'R' Key to Restart the Game
+document.addEventListener("keydown", (event) => {
+  if (event.key === "r" || event.key === "R") {
+    restartGame();  
+  }
+});
+
 // Main Update Function
 function update() {
   if (STATE.paused) return;
