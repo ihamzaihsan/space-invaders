@@ -24,7 +24,11 @@ const STATE = {
   cooldown: 0,
   number_of_enemies: 16,
   enemy_cooldown: 0,
-  gameOver: false
+  gameOver: false,
+  paused: false,
+  score: 0,
+  time :80,
+  lives: 3
 };
 
 // create a function to set the position of the element
@@ -146,6 +150,7 @@ function updateLaser($container) {
       const enemy = enemies[j];
       const enemy_rectangle = enemy.$enemy.getBoundingClientRect();
       if (collideRect(enemy_rectangle, laser_rectangle)) {
+        STATE.score += 10;
         deleteLaser(lasers, laser, laser.$laser);
         const index = enemies.indexOf(enemy);
         enemies.splice(index, 1);
@@ -177,8 +182,11 @@ function updateEnemyLaser($container) {
     }
     const enemyLaser_rectangle = enemyLaser.$enemyLaser.getBoundingClientRect();
     const spaceship_rectangle = document.querySelector(".player").getBoundingClientRect();
-    if (collideRect(spaceship_rectangle, enemyLaser_rectangle)) {
+    if (collideRect(spaceship_rectangle, enemyLaser_rectangle) && STATE.lives==0) {
       STATE.gameOver = true;
+    }else if (collideRect(spaceship_rectangle, enemyLaser_rectangle)) {
+      STATE.lives -= 1;
+      deleteLaser(enemyLasers, enemyLaser, enemyLaser.$enemyLaser);
     }
     setPosition(enemyLaser.$enemyLaser, enemyLaser.x + STATE.enemy_width / 2, enemyLaser.y + 15);
   }
@@ -234,25 +242,56 @@ function monitorPerformance(timestamp) {
   window.requestAnimationFrame(monitorPerformance);
 }
 
+function updateHUD() {
+  document.getElementById("score").textContent = `Score: ${STATE.score}`;
+  document.getElementById("timer").textContent = `Time: ${STATE.time}`;
+  document.getElementById("lives").textContent = `Lives: ${STATE.lives}`;
+}
+
+// function for updating the time 
+function startTimer() {
+  const timerInterval = setInterval(() => {
+    if (!STATE.paused && !STATE.gameOver) {
+      STATE.time -= 1;
+      if (STATE.time <= 0) {
+        STATE.gameOver = true;
+      }
+      updateHUD();
+    } else if (STATE.gameOver) {
+    
+    }
+  }, 1000); // Decrease every 1 second
+}
+
+
+// Check if the game is over or teh player win 
+function checkGameOver() {
+  if (STATE.lives <= 0 || STATE.gameOver) {
+    document.querySelector(".lose").style.display = "block";
+    return true;
+  }
+  if (STATE.enemies.length === 0) {
+    document.querySelector(".win").style.display = "block";
+    return true;
+  }
+  return false;
+}
+
 // Main Update Function
 function update() {
   updatePlayer();
   updateEnemies($container);
   updateLaser($container);
   updateEnemyLaser($container);
-
-  if (STATE.gameOver) {
-    document.querySelector(".lose").style.display = "block";
-  }
-  if (STATE.enemies.length == 0) {
-    document.querySelector(".win").style.display = "block";
-  }
+  updateHUD();
+  //updateTimer();
+ checkGameOver();
 }
 
 // Main animation loop to run at 60 FPS
 window.requestAnimationFrame(monitorPerformance);
 
-// create the enemies row
+// create the enemies ro  w
 function createEnemies($container) {
   for (var i = 0; i <= STATE.number_of_enemies / 2; i++) {
     createEnemy($container, i * 80, 100);
@@ -266,6 +305,8 @@ function createEnemies($container) {
 const $container = document.querySelector(".main");
 createPlayer($container);
 createEnemies($container);
+
+startTimer();  
 
 // Key Press Event Listener
 window.addEventListener("keydown", KeyPress);

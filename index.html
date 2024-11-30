@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Invaders</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
     <div class="wrap">
@@ -27,12 +27,12 @@
         <!-- Scoreboard, timer, and lives -->
         <div id="scoreboard">
             <div id="score">Score: 0</div>
-            <div id="timer">Time: 0</div>
+            <div id="timer">Time: 60</div>
             <div id="lives">Lives: 3</div>
         </div>
 
         <!-- Pause Menu (Initially hidden) -->
-        <div id="pauseMenu" style="display: none;">
+        <div id="pauseMenu" style="display:none">
             <h1>Game Paused</h1>
             <button onclick="togglePause()">Resume</button>
         </div>
