@@ -9,6 +9,10 @@ const KEY_SPACE = 32;
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
 
+// create the game sound 
+const shootSound = new Audio("sounds/shoot.wav");
+const enemyDeathSound = new Audio("sounds/enemy-death.wav");
+
 // store key parameter
 const STATE = {
   x_pos: 0,
@@ -30,6 +34,7 @@ const STATE = {
   time :80,
   lives: 3
 };
+
 
 // create a function to set the position of the element
 function setPosition($element, x, y) {
@@ -115,6 +120,7 @@ function updatePlayer() {
   } if (STATE.shoot && STATE.cooldown == 0) {
     createLaser($container, STATE.x_pos - STATE.spaceship_width / 2, STATE.y_pos);
     STATE.cooldown = 30;
+    shootSound.play();
   }
   const $player = document.querySelector(".player");
   setPosition($player, bound(STATE.x_pos), STATE.y_pos - 10);
@@ -155,6 +161,7 @@ function updateLaser($container) {
         const index = enemies.indexOf(enemy);
         enemies.splice(index, 1);
         $container.removeChild(enemy.$enemy);
+        enemyDeathSound.play();
       }
     }
   }
@@ -336,7 +343,7 @@ document.addEventListener("keydown", (event) => {
 
 // Main Update Function
 function update() {
-  if (STATE.paused) return;
+  if (STATE.paused || STATE.gameOver ) return;
   updatePlayer();
   updateEnemies($container);
   updateLaser($container);
