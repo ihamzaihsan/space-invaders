@@ -10,8 +10,8 @@ const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
 
 // create the game sound 
-const shootSound = new Audio("sounds/shoot.wav");
-const enemyDeathSound = new Audio("sounds/enemy-death.wav");
+const shootSound = new Audio("static/sounds/shoot.wav");
+const enemyDeathSound = new Audio("static/sounds/enemy-death.wav");
 
 // store key parameter
 const STATE = {
@@ -70,7 +70,7 @@ function collideRect(rect1, rect2) {
 // Create the Enemy
 function createEnemy($container, x, y) {
   const $enemy = document.createElement("img");
-  $enemy.src = "img/enemy.png";
+  $enemy.src = "static/img/enemy.png";
   $enemy.className = "enemy";
   $container.appendChild($enemy);
   const enemy_cooldown = Math.floor(Math.random() * 100);
@@ -99,12 +99,13 @@ function updateEnemies($container) {
   }
 }
 
+
 // Create the Player
 function createPlayer($container) {
   STATE.x_pos = GAME_WIDTH / 2;
   STATE.y_pos = GAME_HEIGHT - 50;
   const $player = document.createElement("img");
-  $player.src = "img/Player.png";
+  $player.src = "static/img/Player.png";
   $player.className = "player";
   $container.appendChild($player);
   setPosition($player, STATE.x_pos, STATE.y_pos);
@@ -132,7 +133,7 @@ function updatePlayer() {
 // Player Laser to shoot the bullet
 function createLaser($container, x, y) {
   const $laser = document.createElement("img");
-  $laser.src = "img/laser.png";
+  $laser.src = "static/img/laser.png";
   $laser.className = "laser";
   $container.appendChild($laser);
   const laser = { x, y, $laser };
@@ -170,7 +171,7 @@ function updateLaser($container) {
 // Create Enemy Laser to shoot the bullet on the user
 function createEnemyLaser($container, x, y) {
   const $enemyLaser = document.createElement("img");
-  $enemyLaser.src = "img/enemyLaser.png";
+  $enemyLaser.src = "static/img/enemyLaser.png";
   $enemyLaser.className = "enemyLaser";
   $container.appendChild($enemyLaser);
   const enemyLaser = { x, y, $enemyLaser };
@@ -189,7 +190,7 @@ function updateEnemyLaser($container) {
     }
     const enemyLaser_rectangle = enemyLaser.$enemyLaser.getBoundingClientRect();
     const spaceship_rectangle = document.querySelector(".player").getBoundingClientRect();
-    if (collideRect(spaceship_rectangle, enemyLaser_rectangle) && STATE.lives==0) {
+    if (collideRect(spaceship_rectangle, enemyLaser_rectangle) && STATE.lives <= 0 ) {
       STATE.gameOver = true;
     }else if (collideRect(spaceship_rectangle, enemyLaser_rectangle)) {
       STATE.lives -= 1;

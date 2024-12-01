@@ -1,0 +1,39 @@
+// the function of updating moving the enemy
+function updateEnemies($container) {
+  const dx = 3; // Horizontal movement speed
+  const dy = 20; // Vertical movement speed after hitting the edge
+  const enemies = STATE.enemies;
+  // Check if all enemies have hit the edge
+  let moveDown = false;
+  for (let i = 0; i < enemies.length; i++) {
+    const enemy = enemies[i];
+    // Move enemy left or right
+    if (enemy.x >= GAME_WIDTH - STATE.enemy_width || enemy.x <= 0) {
+      moveDown = true;
+    }
+    if (enemy.x >= GAME_WIDTH - STATE.enemy_width) {
+      enemy.direction = 'left';
+    } else if (enemy.x <= 0) {
+      enemy.direction = 'right';
+    }
+    // Move enemy in its direction
+    if (enemy.direction === 'right') {
+      enemy.x += dx;
+    } else if (enemy.direction === 'left') {
+      enemy.x -= dx;
+    }
+    // Move enemy down if it's time to do so
+    if (moveDown) {
+      enemy.y += dy;
+      moveDown = false;
+    }
+    // Set the position of the enemy
+    setPosition(enemy.$enemy, enemy.x, enemy.y);
+    // Randomly shoot enemy lasers
+    enemy.enemy_cooldown -= 1;
+    if (enemy.enemy_cooldown <= 0) {
+      createEnemyLaser($container, enemy.x + STATE.enemy_width / 2, enemy.y);
+      enemy.enemy_cooldown = Math.floor(Math.random() * 50) + 100;
+    }
+  }
+}
