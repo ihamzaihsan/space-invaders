@@ -266,7 +266,7 @@ function startTimer() {
       }
       updateHUD();
     } else if (STATE.gameOver) {
-    
+      checkGameOver();
     }
   }, 1000); // Decrease every 1 second
 }
@@ -274,7 +274,7 @@ function startTimer() {
 
 // Check if the game is over or teh player win 
 function checkGameOver() {
-  if (STATE.lives <= 0 || STATE.gameOver) {
+  if (STATE.lives <= 0 || STATE.gameOver || STATE.time<=0) {
     document.querySelector(".lose").style.display = "block";
     return true;
   }
@@ -323,6 +323,8 @@ function restartGame() {
   STATE.score = 0;
   STATE.time = 80;
   STATE.lives = 3;
+
+  document.getElementById("pauseMenu").style.display = "none";
 
   // Clear the game area
   const $container = document.querySelector(".main");

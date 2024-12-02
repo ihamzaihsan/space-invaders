@@ -138,21 +138,4 @@ button:hover {
   }
 }
 
-#restartBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 10px 20px;
-  background-color: #f00;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 18px;
-  cursor: pointer;
-  z-index: 100;
-}
-
-#restartBtn:hover {
-  background-color: #d00;
-}
 
