@@ -107,6 +107,10 @@ button:hover {
   z-index: -1;
 }
 
+.main.stopped {
+  animation-play-state: paused;
+}
+
 .lose, .win {
   display: none;
   position: absolute;

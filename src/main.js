@@ -274,12 +274,15 @@ function startTimer() {
 
 // Check if the game is over or teh player win 
 function checkGameOver() {
+  const mainElement = document.querySelector(".main");
   if (STATE.lives <= 0 || STATE.gameOver || STATE.time<=0) {
     document.querySelector(".lose").style.display = "block";
+    mainElement.classList.add("stopped")
     return true;
   }
   if (STATE.enemies.length === 0) {
     document.querySelector(".win").style.display = "block";
+    mainElement.classList.add("stopped")
     return true;
   }
   return false;
@@ -288,13 +291,16 @@ function checkGameOver() {
 // add pause funtion 
 function togglePause() {
   const pauseMenu = document.getElementById("pauseMenu");
+  const mainElement = document.querySelector(".main");
   if (STATE.paused) {
     pauseMenu.style.display = "none"; 
     STATE.paused = false;
+    mainElement.classList.remove("stopped");
     window.requestAnimationFrame(monitorPerformance); 
   } else {
     pauseMenu.style.display = "block"; 
     STATE.paused = true;
+    mainElement.classList.add("stopped");
   }
 }
 
