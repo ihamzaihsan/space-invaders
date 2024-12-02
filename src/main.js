@@ -313,6 +313,8 @@ document.addEventListener("keydown", (event) => {
 
 // Restart Game Function
 function restartGame() {
+
+  const mainElement = document.querySelector(".main");
   // Reset all game state
   STATE.x_pos = GAME_WIDTH / 2;
   STATE.y_pos = GAME_HEIGHT - 50;
@@ -329,7 +331,8 @@ function restartGame() {
   STATE.score = 0;
   STATE.time = 80;
   STATE.lives = 3;
-
+  
+  mainElement.classList.remove("stopped");
   document.getElementById("pauseMenu").style.display = "none";
 
   // Clear the game area
