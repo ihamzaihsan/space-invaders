@@ -335,6 +335,9 @@ function restartGame() {
   mainElement.classList.remove("stopped");
   document.getElementById("pauseMenu").style.display = "none";
 
+  document.querySelector(".lose").style.display = "none";
+   document.querySelector(".win").style.display = "none";
+
   // Clear the game area
   const $container = document.querySelector(".main");
   $container.innerHTML = ""; 

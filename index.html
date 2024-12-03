@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,38 +8,40 @@
     <title>Space Invaders</title>
     <link rel="stylesheet" href="static/style.css">
 </head>
+
 <body>
     <div class="wrap">
         <header>Space Invaders</header>
         <div class="game-wrapper">
             <div class="main"></div>
+            
             <div class="lose">
                 <h1>GAME OVER</h1>
                 <h2>Better luck next time!</h2>
-                <button class="btn" onclick="window.location.reload()">Restart</button>
+                <p>Press 'R' to Restart</p>
             </div>
+            
             <div class="win">
                 <h1>YOU WIN!</h1>
                 <h2>Winner</h2>
-                <button class="btn" onclick="window.location.reload()">Restart</button>
+                <p>Press 'R' to Restart</p>
             </div>
         </div>
 
-        <!-- Scoreboard, timer, and lives -->
         <div id="scoreboard">
             <div id="score">Score: 0</div>
             <div id="timer">Time: 80</div>
             <div id="lives">Lives: 3</div>
         </div>
 
-        <!-- Pause Menu (Initially hidden) -->
-        <div id="pauseMenu" style="display: none ">
+        <div id="pauseMenu" style="display: none;">
             <h1>Game Paused</h1>
             <p>Press 'P' to resume</p>
-            <p>Press 'R' to Res</p>
+            <p>Press 'R' to Restart</p>
         </div>
     </div>
 
     <script src="src/main.js"></script>
 </body>
+
 </html>
