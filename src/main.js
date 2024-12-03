@@ -278,11 +278,13 @@ function checkGameOver() {
   if (STATE.lives <= 0 || STATE.gameOver || STATE.time<=0) {
     document.querySelector(".lose").style.display = "block";
     mainElement.classList.add("stopped")
+    STATE.gameOver = true;
     return true;
   }
   if (STATE.enemies.length === 0) {
     document.querySelector(".win").style.display = "block";
     mainElement.classList.add("stopped")
+    STATE.gameOver = true;
     return true;
   }
   return false;
