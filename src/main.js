@@ -402,10 +402,11 @@ document.addEventListener("keydown", (event) => {
 
 document.addEventListener("keydown", function(e){
   if(e.ctrlKey && (e.key ==="+" || e.key ==="-" || e.key === "=")){
-    alert(e.key);
     e.preventDefault();
   }
 });
+
+document.body.style.zoom = "100%";
 
 document.addEventListener('wheel', function(e) {
   if(e.ctrlKey){
