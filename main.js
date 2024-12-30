@@ -31,7 +31,7 @@ const STATE = {
   gameOver: false,
   paused: false,
   score: 0,
-  time :80,
+  time :1180,
   lives: 3,
   enemyDirection: 1,  
   dropEnemies: false,
@@ -86,18 +86,19 @@ function createEnemy($container, x, y) {
 function updateEnemies($container) {
   const ENEMY_SPEED = 1;
   const ENEMY_DROP = 30;
-  
+  const PLAYER_Y_POSITION = GAME_HEIGHT - 90; 
+
   // Get the leftmost and rightmost enemy positions
   let leftMostX = GAME_WIDTH;
   let rightMostX = 0;
-  
+
   STATE.enemies.forEach(enemy => {
     leftMostX = Math.min(leftMostX, enemy.x);
     rightMostX = Math.max(rightMostX, enemy.x);
   });
 
   // Check if enemies hit the boundaries
-  if (rightMostX + STATE.enemy_width >= GAME_WIDTH) {
+  if (rightMostX + STATE.enemy_width >= GAME_WIDTH-40) {
     STATE.enemyDirection = -1;
     STATE.dropEnemies = true;
   } else if (leftMostX <= 0) {
@@ -111,6 +112,13 @@ function updateEnemies($container) {
       enemy.y += ENEMY_DROP;
     }
     enemy.x += ENEMY_SPEED * (STATE.enemyDirection || 1);
+
+    // Check if enemy reaches player's line
+    if (enemy.y >= PLAYER_Y_POSITION) {
+      STATE.gameOver = true;
+      STATE.lives = 0;
+      return;
+    }
 
     // Update enemy position
     setPosition(enemy.$enemy, enemy.x, enemy.y);
@@ -138,7 +146,6 @@ function updateEnemies($container) {
   // Reset drop flag
   STATE.dropEnemies = false;
 }
-
 
 
 // Create the Player
@@ -431,10 +438,10 @@ window.requestAnimationFrame(monitorPerformance);
 // create the enemies row
 function createEnemies($container) {
   for (var i = 0; i <= STATE.number_of_enemies / 2; i++) {
-    createEnemy($container, i * 80, 100);
+    createEnemy($container, i * 80, 10);
   }
   for (var i = 0; i <= STATE.number_of_enemies / 2; i++) {
-    createEnemy($container, i * 80, 180);
+    createEnemy($container, i * 80, 70);
   }
 }
 
