@@ -255,27 +255,23 @@ function deleteLaser(lasers, laser, $laser) {
   $container.removeChild($laser);
 }
 
-// Key Presses
-function KeyPress(event) {
-  if (event.keyCode === KEY_RIGHT) {
-    STATE.move_right = true;
-  } else if (event.keyCode === KEY_LEFT) {
-    STATE.move_left = true;
-  } else if (event.keyCode === KEY_SPACE) {
-    STATE.shoot = true;
+// KeyPress and KeyRelease
+function handleKeyEvent(event, isKeyDown) {
+  switch(event.keyCode) {
+    case KEYS.RIGHT:
+      STATE.move_right = isKeyDown;
+      break;
+    case KEYS.LEFT:
+      STATE.move_left = isKeyDown;
+      break;
+    case KEYS.SPACE:
+      STATE.shoot = isKeyDown;
+      break;
   }
 }
 
-// Key Releases
-function KeyRelease(event) {
-  if (event.keyCode === KEY_RIGHT) {
-    STATE.move_right = false;
-  } else if (event.keyCode === KEY_LEFT) {
-    STATE.move_left = false;
-  } else if (event.keyCode === KEY_SPACE) {
-    STATE.shoot = false;
-  }
-}
+window.addEventListener("keydown", e => handleKeyEvent(e, true));
+window.addEventListener("keyup", e => handleKeyEvent(e, false));
 
 // Performance Monitoring
 let lastTime = 0;
