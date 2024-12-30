@@ -459,9 +459,5 @@ createEnemies($container);
 
 startTimer();  
 
-// Key Press Event Listener
-window.addEventListener("keydown", KeyPress);
-window.addEventListener("keyup", KeyRelease);
-
 // Start the game loop
 window.requestAnimationFrame(monitorPerformance);
