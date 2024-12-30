@@ -32,7 +32,9 @@ const STATE = {
   paused: false,
   score: 0,
   time :80,
-  lives: 3
+  lives: 3,
+  enemyDirection: 1,  
+  dropEnemies: false,
 };
 
 
@@ -82,22 +84,61 @@ function createEnemy($container, x, y) {
 
 // the function of updating moving the enemy
 function updateEnemies($container) {
-  const dx = Math.cos(Date.now() / 1000) * 40;
-  const dy = Math.cos(Date.now() / 1000) * 30;
-  const enemies = STATE.enemies;
-  for (let i = 0; i < enemies.length; i++) {
-    const enemy = enemies[i];
-    var a = enemy.x + dx;
-    var b = enemy.y + dy;
-    setPosition(enemy.$enemy, a, b);
-    enemy.cooldown = Math.random(0, 100);
-    if (enemy.enemy_cooldown == 0) {
-      createEnemyLaser($container, a, b);
+  const ENEMY_SPEED = 1;
+  const ENEMY_DROP = 30;
+  
+  // Get the leftmost and rightmost enemy positions
+  let leftMostX = GAME_WIDTH;
+  let rightMostX = 0;
+  
+  STATE.enemies.forEach(enemy => {
+    leftMostX = Math.min(leftMostX, enemy.x);
+    rightMostX = Math.max(rightMostX, enemy.x);
+  });
+
+  // Check if enemies hit the boundaries
+  if (rightMostX + STATE.enemy_width >= GAME_WIDTH) {
+    STATE.enemyDirection = -1;
+    STATE.dropEnemies = true;
+  } else if (leftMostX <= 0) {
+    STATE.enemyDirection = 1;
+    STATE.dropEnemies = true;
+  }
+
+  // Update each enemy position
+  STATE.enemies.forEach(enemy => {
+    if (STATE.dropEnemies) {
+      enemy.y += ENEMY_DROP;
+    }
+    enemy.x += ENEMY_SPEED * (STATE.enemyDirection || 1);
+
+    // Update enemy position
+    setPosition(enemy.$enemy, enemy.x, enemy.y);
+
+    // Handle enemy shooting
+    if (enemy.enemy_cooldown <= 0) {
+      createEnemyLaser($container, enemy.x, enemy.y);
       enemy.enemy_cooldown = Math.floor(Math.random() * 50) + 100;
     }
     enemy.enemy_cooldown -= 0.5;
+  });
+
+  const $player = document.querySelector(".player");
+  const player_rectangle = $player.getBoundingClientRect();
+
+  for (let enemy of STATE.enemies) {
+    const enemy_rectangle = enemy.$enemy.getBoundingClientRect();
+    if (collideRect(enemy_rectangle, player_rectangle)) {
+      STATE.gameOver = true;
+      STATE.lives = 0;
+      return true;
+    }
   }
+
+  // Reset drop flag
+  STATE.dropEnemies = false;
 }
+
 
 
 // Create the Player
@@ -120,7 +161,7 @@ function updatePlayer() {
     STATE.x_pos += 3;
   } if (STATE.shoot && STATE.cooldown == 0) {
     createLaser($container, STATE.x_pos - STATE.spaceship_width / 2, STATE.y_pos);
-    STATE.cooldown = 30;
+    STATE.cooldown = 20;
     shootSound.play();
   }
   const $player = document.querySelector(".player");
@@ -357,6 +398,20 @@ document.addEventListener("keydown", (event) => {
     restartGame();  
   }
 });
+
+
+document.addEventListener("keydown", function(e){
+  if(e.ctrlKey && (e.key ==="+" || e.key ==="-" || e.key === "=")){
+    alert(e.key);
+    e.preventDefault();
+  }
+});
+
+document.addEventListener('wheel', function(e) {
+  if(e.ctrlKey){
+    e.preventDefault();
+  }
+},{passive: false});
 
 // Main Update Function
 function update() {
