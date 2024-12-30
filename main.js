@@ -31,7 +31,7 @@ const STATE = {
   gameOver: false,
   paused: false,
   score: 0,
-  time :1180,
+  time :80,
   lives: 3,
   enemyDirection: 1,  
   dropEnemies: false,
@@ -85,7 +85,7 @@ function createEnemy($container, x, y) {
 // the function of updating moving the enemy
 function updateEnemies($container) {
   const ENEMY_SPEED = 1;
-  const ENEMY_DROP = 30;
+  const ENEMY_DROP = 20;
   const PLAYER_Y_POSITION = GAME_HEIGHT - 90; 
 
   // Get the leftmost and rightmost enemy positions
@@ -168,7 +168,7 @@ function updatePlayer() {
     STATE.x_pos += 3;
   } if (STATE.shoot && STATE.cooldown == 0) {
     createLaser($container, STATE.x_pos - STATE.spaceship_width / 2, STATE.y_pos);
-    STATE.cooldown = 20;
+    STATE.cooldown = 15;
     shootSound.play();
   }
   const $player = document.querySelector(".player");
@@ -305,20 +305,28 @@ function updateHUD() {
 }
 
 // function for updating the time 
-function startTimer() {
-  const timerInterval = setInterval(() => {
-    if (!STATE.paused && !STATE.gameOver) {
-      STATE.time -= 1;
-      if (STATE.time <= 0) {
-        STATE.gameOver = true;
-      }
-      updateHUD();
-    } else if (STATE.gameOver) {
-      checkGameOver();
+  function startTimer() {
+    // Clear any existing timer first
+    if (window.timerInterval) {
+      clearInterval(window.timerInterval);
     }
-  }, 1000); // Decrease every 1 second
-}
-
+  
+    window.timerInterval = setInterval(() => {
+      if (!STATE.paused && !STATE.gameOver) {
+        STATE.time = Math.max(0, STATE.time - 1);
+        if (STATE.time <= 0) {
+          STATE.gameOver = true;
+          clearInterval(window.timerInterval);
+        }
+        // Only update the HUD timer display
+        document.getElementById("timer").textContent = `Time: ${STATE.time}`;
+      } else if (STATE.gameOver) {
+        clearInterval(window.timerInterval);
+        checkGameOver();
+      }
+    }, 1000);
+  }
+  
 
 // Check if the game is over or teh player win 
 function checkGameOver() {
@@ -363,6 +371,9 @@ document.addEventListener("keydown", (event) => {
 
 // Restart Game Function
 function restartGame() {
+  if (window.timerInterval) {
+    clearInterval(window.timerInterval);
+  }
 
   const mainElement = document.querySelector(".main");
   // Reset all game state
