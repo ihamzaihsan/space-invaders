@@ -31,7 +31,7 @@ const STATE = {
   gameOver: false,
   paused: false,
   score: 0,
-  time :80,
+  time :45,
   lives: 3,
   enemyDirection: 1,  
   dropEnemies: false,
@@ -390,7 +390,7 @@ function restartGame() {
   STATE.gameOver = false;
   STATE.paused = false;
   STATE.score = 0;
-  STATE.time = 80;
+  STATE.time = 45;
   STATE.lives = 3;
   
   mainElement.classList.remove("stopped");
