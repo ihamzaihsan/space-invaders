@@ -168,7 +168,7 @@ function updatePlayer() {
     STATE.x_pos += 3;
   } if (STATE.shoot && STATE.cooldown == 0) {
     createLaser($container, STATE.x_pos - STATE.spaceship_width / 2, STATE.y_pos);
-    STATE.cooldown = 15;
+    STATE.cooldown = 1;
     shootSound.play();
   }
   const $player = document.querySelector(".player");
@@ -316,6 +316,7 @@ function updateHUD() {
         STATE.time = Math.max(0, STATE.time - 1);
         if (STATE.time <= 0) {
           STATE.gameOver = true;
+          checkGameOver();
           clearInterval(window.timerInterval);
         }
         // Only update the HUD timer display
@@ -332,6 +333,7 @@ function updateHUD() {
 function checkGameOver() {
   const mainElement = document.querySelector(".main");
   if (STATE.lives <= 0 || STATE.gameOver || STATE.time<=0) {
+    console.log(STATE.time)
     document.querySelector(".lose").style.display = "block";
     mainElement.classList.add("stopped")
     STATE.gameOver = true;
@@ -339,8 +341,6 @@ function checkGameOver() {
   }
   if (STATE.enemies.length === 0) {
     document.querySelector(".win").style.display = "block";
-    mainElement.classList.add("stopped")
-    STATE.gameOver = true;
     return true;
   }
   return false;
