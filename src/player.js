@@ -16,7 +16,7 @@ function updatePlayer() {
     STATE.x_pos += 3;
   } if (STATE.shoot && STATE.cooldown == 0) {
     createLaser($container, STATE.x_pos - STATE.spaceship_width / 2, STATE.y_pos);
-    STATE.cooldown = 15;
+    STATE.cooldown = 10;
     shootSound.play();
   }
   const $player = document.querySelector(".player");
