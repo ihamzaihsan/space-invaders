@@ -168,7 +168,7 @@ function updatePlayer() {
     STATE.x_pos += 3;
   } if (STATE.shoot && STATE.cooldown == 0) {
     createLaser($container, STATE.x_pos - STATE.spaceship_width / 2, STATE.y_pos);
-    STATE.cooldown = 1;
+    STATE.cooldown = 15;
     shootSound.play();
   }
   const $player = document.querySelector(".player");
@@ -341,6 +341,8 @@ function checkGameOver() {
   }
   if (STATE.enemies.length === 0) {
     document.querySelector(".win").style.display = "block";
+    mainElement.classList.add("stopped")
+    STATE.gameOver = true;
     return true;
   }
   return false;
