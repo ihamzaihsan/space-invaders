@@ -11,38 +11,46 @@
 
 <body>
     <div class="game">
-    <div class="wrap">
-        <header>Space Invaders</header>
-        <div class="game-wrapper">
-            <div class="main"></div>
-            
-            <div class="lose">
-                <h1>GAME OVER</h1>
-                <h2>Better luck next time!</h2>
+        <div class="wrap">
+            <header>Space Invaders</header>
+            <div class="game-wrapper">
+                <div class="main"></div>
+                
+                <div class="lose">
+                    <h1>GAME OVER</h1>
+                    <h2>Better luck next time!</h2>
+                    <p>Press 'R' to Restart</p>
+                </div>
+                
+                <div class="win">
+                    <h1>YOU WIN!</h1>
+                    <h2>Winner Play another game</h2>
+                    <p>Press 'R' to Restart</p>
+                </div>
+            </div>
+
+            <div id="scoreboard">
+                <div id="score">Score: 0</div>
+                <div id="timer">Time: 45</div>
+                <div id="lives">Lives: 3</div>
+            </div>
+
+            <div id="pauseMenu" style="display: none;">
+                <h1>Game Paused</h1>
+                <p>Press 'P' to resume</p>
                 <p>Press 'R' to Restart</p>
             </div>
-            
-            <div class="win">
-                <h1>YOU WIN!</h1>
-                <h2>Winner Play another game</h2>
-                <p>Press 'R' to Restart</p>
-            </div>
-        </div>
-
-        <div id="scoreboard">
-            <div id="score">Score: 0</div>
-            <div id="timer">Time: 45</div>
-            <div id="lives">Lives: 3</div>
-        </div>
-
-        <div id="pauseMenu" style="display: none;">
-            <h1>Game Paused</h1>
-            <p>Press 'P' to resume</p>
-            <p>Press 'R' to Restart</p>
         </div>
     </div>
-    </div>
-    <script src="main.js"></script>
+
+    <script src="src/constants.js"></script>
+    <script src="src/state.js"></script>
+    <script src="src/utils.js"></script>
+    <script src="src/player.js"></script>
+    <script src="src/enemy.js"></script>
+    <script src="src/laser.js"></script>
+    <script src="src/controls.js"></script>
+    <script src="src/game.js"></script>
 </body>
 
 </html>
