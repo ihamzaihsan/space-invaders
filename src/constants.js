@@ -1,14 +1,8 @@
-// create the moving key
-const KEY_UP = 38;
-const KEY_DOWN = 40;
-const KEY_RIGHT = 39;
-const KEY_LEFT = 37;
-const KEY_SPACE = 32;
-
-// create the game window size
-const GAME_WIDTH = 800;
-const GAME_HEIGHT = 600;
-
-// create the game sound 
-const shootSound = new Audio("static/sounds/shoot.wav");
-const enemyDeathSound = new Audio("static/sounds/enemy-death.wav");
+export const GAME_WIDTH = 800;
+export const GAME_HEIGHT = 600;
+export const ROUND_SECONDS = 45;
+export const POINTS_PER_ENEMY = 10;
+export const PLAYER_SPEED = 240;
+export const ENEMY_SPEED = 60;
+export const LASER_SPEED = 360;
+export const ENEMY_LASER_SPEED = 140;

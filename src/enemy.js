@@ -1,77 +1,42 @@
-function createEnemy($container, x, y) {
-  const $enemy = document.createElement("img");
-  $enemy.src = "static/img/enemy.png";
-  $enemy.className = "enemy";
-  $container.appendChild($enemy);
-  const enemy_cooldown = Math.floor(Math.random() * 100);
-  const enemy = { x, y, $enemy, enemy_cooldown };
-  STATE.enemies.push(enemy);
-  setSize($enemy, STATE.enemy_width);
-  setPosition($enemy, x, y);
+import { GAME_WIDTH, ENEMY_SPEED } from './constants.js';
+import { createSprite, setPosition, overlaps } from './utils.js';
+import { createLaser } from './laser.js';
+
+export function createEnemies(container) {
+  const enemies = [];
+  for (let row = 0; row < 2; row++) {
+    for (let column = 0; column < 9; column++) {
+      const enemy = createSprite(container, 'enemy', 'enemy.png', 40 + column * 80, 30 + row * 60, 50, 40);
+      enemy.cooldown = 0.8 + Math.random() * 3.2;
+      enemies.push(enemy);
+    }
+  }
+  return enemies;
 }
 
-function updateEnemies($container) {
-  const ENEMY_SPEED = 1;
-  const ENEMY_DROP = 20;
-  const PLAYER_Y_POSITION = GAME_HEIGHT - 90;
-
-  let leftMostX = GAME_WIDTH;
-  let rightMostX = 0;
-
-  STATE.enemies.forEach(enemy => {
-    leftMostX = Math.min(leftMostX, enemy.x);
-    rightMostX = Math.max(rightMostX, enemy.x);
-  });
-
-  if (rightMostX + STATE.enemy_width >= GAME_WIDTH-40) {
-    STATE.enemyDirection = -1;
-    STATE.dropEnemies = true;
-  } else if (leftMostX <= 0) {
-    STATE.enemyDirection = 1;
-    STATE.dropEnemies = true;
+export function updateEnemies(state, container, dt) {
+  if (!state.enemies.length) return false;
+  const left = Math.min(...state.enemies.map(enemy => enemy.x));
+  const right = Math.max(...state.enemies.map(enemy => enemy.x + enemy.width));
+  let movement = ENEMY_SPEED * dt * state.enemyDirection;
+  let drop = 0;
+  if ((state.enemyDirection > 0 && right + movement >= GAME_WIDTH) ||
+      (state.enemyDirection < 0 && left + movement <= 0)) {
+    movement = state.enemyDirection > 0 ? GAME_WIDTH - right : -left;
+    state.enemyDirection *= -1;
+    drop = 20;
   }
-
-  STATE.enemies.forEach(enemy => {
-    if (STATE.dropEnemies) {
-      enemy.y += ENEMY_DROP;
+  let invaded = false;
+  for (const enemy of state.enemies) {
+    enemy.x += movement;
+    enemy.y += drop;
+    enemy.cooldown -= dt;
+    if (enemy.cooldown <= 0) {
+      createLaser(state, container, enemy.x + enemy.width / 2 - 3, enemy.y + enemy.height, true);
+      enemy.cooldown = 3 + Math.random() * 3;
     }
-    enemy.x += ENEMY_SPEED * (STATE.enemyDirection || 1);
-
-    if (enemy.y >= PLAYER_Y_POSITION) {
-      STATE.gameOver = true;
-      STATE.lives = 0;
-      return;
-    }
-
-    setPosition(enemy.$enemy, enemy.x, enemy.y);
-
-    if (enemy.enemy_cooldown <= 0) {
-      createEnemyLaser($container, enemy.x, enemy.y);
-      enemy.enemy_cooldown = Math.floor(Math.random() * 50) + 100;
-    }
-    enemy.enemy_cooldown -= 0.5;
-  });
-
-  const $player = document.querySelector(".player");
-  const player_rectangle = $player.getBoundingClientRect();
-
-  for (let enemy of STATE.enemies) {
-    const enemy_rectangle = enemy.$enemy.getBoundingClientRect();
-    if (collideRect(enemy_rectangle, player_rectangle)) {
-      STATE.gameOver = true;
-      STATE.lives = 0;
-      return true;
-    }
+    if (enemy.y + enemy.height >= state.player.y || overlaps(enemy, state.player)) invaded = true;
+    setPosition(enemy);
   }
-
-  STATE.dropEnemies = false;
-}
-
-function createEnemies($container) {
-  for (var i = 0; i <= STATE.number_of_enemies / 2; i++) {
-    createEnemy($container, i * 80, 10);
-  }
-  for (var i = 0; i <= STATE.number_of_enemies / 2; i++) {
-    createEnemy($container, i * 80, 70);
-  }
+  return invaded;
 }

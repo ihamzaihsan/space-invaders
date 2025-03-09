@@ -1,57 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space Invaders</title>
-    <link rel="stylesheet" href="static/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A keyboard-controlled Space Invaders browser recreation with keyboard controls and an invader formation.">
+  <title>Space Invaders: JavaScript Browser Recreation</title>
+  <link rel="icon" href="static/img/Player.png">
+  <link rel="stylesheet" href="static/style.css">
 </head>
-
 <body>
-    <div class="game">
-        <div class="wrap">
-            <header>Space Invaders</header>
-            <div class="game-wrapper">
-                <div class="main"></div>
-                
-                <div class="lose">
-                    <h1>GAME OVER</h1>
-                    <h2>Better luck next time!</h2>
-                    <p>Press 'R' to Restart</p>
-                </div>
-                
-                <div class="win">
-                    <h1>YOU WIN!</h1>
-                    <h2>Winner Play another game</h2>
-                    <p>Press 'R' to Restart</p>
-                </div>
-            
-                <div id="pauseMenu" style="display: none;">
-                    <h1>Game Paused</h1>
-                    <p>Press 'P' to resume</p>
-                    <p>Press 'R' to Restart</p>
-                </div>
-            </div>
-            
-
-            <div id="scoreboard">
-                <div id="score">Score: 0</div>
-                <div id="timer">Time: 45</div>
-                <div id="lives">Lives: 3</div>
-            </div>
-        </div>
+  <main class="wrap">
+    <header><span class="eyebrow">THE BLUE FRONTIER</span><h1>Space Invaders</h1><p>A JavaScript browser recreation</p></header>
+    <div class="hud" aria-label="Game status">
+      <span id="sector"></span><span id="score">Score: 0</span><span id="timer">Time: 00:45</span><span id="lives">Lives: 3</span>
     </div>
-
-    <script src="src/constants.js"></script>
-    <script src="src/state.js"></script>
-    <script src="src/utils.js"></script>
-    <script src="src/player.js"></script>
-    <script src="src/enemy.js"></script>
-    <script src="src/laser.js"></script>
-    <script src="src/controls.js"></script>
-    <script src="src/index.js"></script>
+    <div class="game-wrapper">
+      <div class="main" aria-label="Space Invaders playfield"><div id="actors" aria-hidden="true"></div></div>
+      <section id="overlay" class="overlay" aria-label="Game menu">
+        <div id="intro-panel" class="panel">
+          <span class="eyebrow">MISSION BRIEFING</span><h2>Defend the sector</h2><p id="introduction"></p>
+          <button id="start-button">Start mission · Enter</button>
+        </div>
+        <div id="pause-panel" class="panel" hidden>
+          <span class="eyebrow">FLIGHT SUSPENDED</span><h2>Game paused</h2><p>Your time and position are safe.</p>
+          <div class="actions"><button id="continue-button">Continue · P</button><button class="secondary restart-button">Restart · R</button></div>
+        </div>
+        <div id="end-panel" class="panel end-panel" hidden>
+          <h2 id="result-title"></h2><p id="conclusion"></p><p id="result-summary" class="muted"></p>
+          <button id="end-restart" class="restart-button secondary">New mission · R</button>
+        </div>
+      </section>
+    </div>
+    <footer><p><kbd>←</kbd> <kbd>→</kbd> Move &nbsp; <kbd>Space</kbd> Hold to fire &nbsp; <kbd>P</kbd> / <kbd>Esc</kbd> Pause &nbsp; <kbd>R</kbd> Restart</p><p>Clear 18 invaders · 10 points each · 3 lives · 45 seconds</p></footer>
+  </main>
+  <script type="module" src="src/index.js"></script>
 </body>
-
 </html>

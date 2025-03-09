@@ -1,138 +1,95 @@
-let lastTime = 0;
+import { ROUND_SECONDS } from './constants.js';
+import { createState } from './state.js';
+import { createPlayer, updatePlayer } from './player.js';
+import { createEnemies, updateEnemies } from './enemy.js';
+import { updateLasers } from './laser.js';
+import { setupControls } from './controls.js';
+import { formatTime } from './utils.js';
 
-function monitorPerformance(timestamp) {
-  const delta = timestamp - lastTime;
+const actors = document.getElementById('actors');
+const overlay = document.getElementById('overlay');
+const panels = ['intro', 'pause', 'end'];
+let state;
+let lastTime = null;
+const selectedMap = { id: 'frontier', name: 'Blue Frontier' };
 
-  if (delta < 1000 / 60) {
-    window.requestAnimationFrame(monitorPerformance);
-    return;
-  }
+document.getElementById('introduction').textContent = 'Clear all 18 invaders before the 45-second countdown expires. Use the arrow keys to move and hold Space to fire.';
 
-  lastTime = timestamp;
-  update();
-  window.requestAnimationFrame(monitorPerformance);
+function setPhase(phase) {
+  state.phase = phase;
+  controls.clear();
+  lastTime = null;
+  overlay.hidden = phase === 'playing';
+  for (const panel of panels) document.getElementById(`${panel}-panel`).hidden = panel !== phase;
 }
 
-function startTimer() {
-  if (window.timerInterval) {
-    clearInterval(window.timerInterval);
+function updateHUD() {
+  const values = { score: `Score: ${state.score}`, timer: `Time: ${formatTime(Math.ceil(state.time))}`, lives: `Lives: ${state.lives}` };
+  for (const [id, value] of Object.entries(values)) {
+    const node = document.getElementById(id);
+    if (node.textContent !== value) node.textContent = value;
   }
+}
 
-  window.timerInterval = setInterval(() => {
-    if (!STATE.paused && !STATE.gameOver) {
-      STATE.time = Math.max(0, STATE.time - 1);
-      if (STATE.time <= 0) {
-        STATE.gameOver = true;
-        checkGameOver();
-        clearInterval(window.timerInterval);
+function restart() {
+  state = createState(selectedMap.id);
+  actors.replaceChildren();
+  state.player = createPlayer(actors);
+  state.enemies = createEnemies(actors);
+  document.getElementById('sector').textContent = selectedMap.name;
+  updateHUD();
+  setPhase('intro');
+}
+
+function start() { if (state.phase === 'intro') setPhase('playing'); }
+function pause() {
+  if (state.phase === 'playing') setPhase('pause');
+  else if (state.phase === 'pause') setPhase('playing');
+}
+function continueStory() {}
+
+function finish(outcome, reason = '') {
+  if (state.phase !== 'playing') return;
+  setPhase('end');
+  document.getElementById('result-title').textContent = outcome === 'victory' ? 'Mission complete' : 'Game over';
+  document.getElementById('conclusion').textContent = outcome === 'victory' ? 'The sector is clear. Well played!' : 'Try again to clear the sector.';
+  document.getElementById('result-summary').textContent = `${selectedMap.name} · ${state.score} points · ${formatTime(state.elapsed)} flight time${reason ? ` · ${reason}` : ''}`;
+}
+
+function step(dt) {
+  updatePlayer(state, controls.keys, actors, dt);
+  const invaded = updateEnemies(state, actors, dt);
+  updateLasers(state, dt, false);
+  updateLasers(state, dt, true);
+  if (invaded || state.lives <= 0) finish('defeat', invaded ? 'Invaders reached the fleet' : 'No lives remaining');
+  else if (!state.enemies.length) finish('victory');
+}
+
+// One animation chain survives pause/restart. Motion is time-based, with small
+// bounded steps for collisions; countdown uses active wall time, excluding menus.
+function frame(timestamp) {
+  if (state.phase === 'playing' && lastTime !== null) {
+    const elapsed = Math.max(0, (timestamp - lastTime) / 1000);
+    state.elapsed = Math.min(ROUND_SECONDS, state.elapsed + elapsed);
+    state.time = Math.max(0, ROUND_SECONDS - state.elapsed);
+    if (state.time <= 0) finish('defeat', 'Jump window expired');
+    else {
+      let remaining = Math.min(elapsed, 0.05);
+      while (remaining > 0 && state.phase === 'playing') {
+        const dt = Math.min(remaining, 1 / 120);
+        step(dt);
+        remaining -= dt;
       }
-      document.getElementById("timer").textContent = `Time: ${STATE.time}`;
-    } else if (STATE.gameOver) {
-      clearInterval(window.timerInterval);
-      checkGameOver();
     }
-  }, 1000);
+    updateHUD();
+  }
+  lastTime = state.phase === 'playing' ? timestamp : null;
+  requestAnimationFrame(frame);
 }
 
-function checkGameOver() {
-  const mainElement = document.querySelector(".main");
-  if (STATE.lives <= 0 || STATE.gameOver || STATE.time <= 0) {
-    document.querySelector(".lose").style.display = "block";
-    mainElement.classList.add("stopped");
-    STATE.gameOver = true;
-    return true;
-  }
-  if (STATE.enemies.length === 0) {
-    document.querySelector(".win").style.display = "block";
-    mainElement.classList.add("stopped");
-    STATE.gameOver = true;
-    return true;
-  }
-  return false;
-}
-
-function togglePause() {
-  const pauseMenu = document.getElementById("pauseMenu");
-  const mainElement = document.querySelector(".main");
-  if (STATE.paused) {
-    pauseMenu.style.display = "none";
-    STATE.paused = false;
-    mainElement.classList.remove("stopped");
-    window.requestAnimationFrame(monitorPerformance);
-  } else {
-    pauseMenu.style.display = "block";
-    STATE.paused = true;
-    mainElement.classList.add("stopped");
-  }
-}
-
-function restartGame() {
-  if (window.timerInterval) {
-    clearInterval(window.timerInterval);
-  }
-
-  const mainElement = document.querySelector(".main");
-  STATE.x_pos = GAME_WIDTH / 2;
-  STATE.y_pos = GAME_HEIGHT - 50;
-  STATE.move_right = false;
-  STATE.move_left = false;
-  STATE.shoot = false;
-  STATE.lasers = [];
-  STATE.enemyLasers = [];
-  STATE.enemies = [];
-  STATE.cooldown = 0;
-  STATE.enemy_cooldown = 0;
-  STATE.gameOver = false;
-  STATE.paused = false;
-  STATE.score = 0;
-  STATE.time = 45;
-  STATE.lives = 3;
-
-  mainElement.classList.remove("stopped");
-  document.getElementById("pauseMenu").style.display = "none";
-  document.querySelector(".lose").style.display = "none";
-  document.querySelector(".win").style.display = "none";
-
-  const $container = document.querySelector(".main");
-  $container.innerHTML = "";
-
-  createPlayer($container);
-  createEnemies($container);
-  startTimer();
-  updateHUD();
-}
-
-function update() {
-  if (STATE.paused || STATE.gameOver) return;
-  updatePlayer();
-  updateEnemies($container);
-  updateLaser($container);
-  updateEnemyLaser($container);
-  updateHUD();
-  checkGameOver();
-}
-
-// Initialize zoom control
-document.body.style.zoom = "100%";
-
-// Prevent zoom controls
-document.addEventListener("keydown", function(e) {
-  if (e.ctrlKey && (e.key === "+" || e.key === "-" || e.key === "=")) {
-    e.preventDefault();
-  }
-});
-
-document.addEventListener('wheel', function(e) {
-  if (e.ctrlKey) {
-    e.preventDefault();
-  }
-}, {passive: false});
-
-// Initialize the Game
-const $container = document.querySelector(".main");
-createPlayer($container);
-createEnemies($container);
-startTimer();
-
-// Start the game loop
-window.requestAnimationFrame(monitorPerformance);
+const controls = setupControls({ getPhase: () => state.phase, start, pause, restart, continueStory });
+document.getElementById('start-button').addEventListener('click', start);
+document.getElementById('continue-button').addEventListener('click', pause);
+document.querySelectorAll('.restart-button').forEach(button => button.addEventListener('click', restart));
+restart();
+requestAnimationFrame(frame);

@@ -1,39 +1,43 @@
-function setPosition($element, x, y) {
-  $element.style.transform = `translate(${x}px, ${y}px)`;
+export function setPosition(entity) {
+  entity.element.style.transform = `translate(${entity.x}px, ${entity.y}px)`;
 }
 
-function setSize($element, width) {
-  $element.style.width = `${width}px`;
-  $element.style.height = "auto";
+export function createSprite(container, className, image, x, y, width, height) {
+  const element = document.createElement('img');
+  element.src = `static/img/${image}`;
+  element.className = className;
+  element.alt = '';
+  element.draggable = false;
+  element.width = width;
+  element.height = height;
+  const entity = { element, x, y, width, height };
+  setPosition(entity);
+  container.append(element);
+  return entity;
 }
 
-function bound(x) {
-  if (x >= GAME_WIDTH - STATE.spaceship_width) {
-    STATE.x_pos = GAME_WIDTH - STATE.spaceship_width;
-    return GAME_WIDTH - STATE.spaceship_width;
-  } if (x <= 0) {
-    STATE.x_pos = 0;
-    return 0;
-  } else {
-    return x;
-  }
+// Collisions use game coordinates, independent of viewport scaling.
+export function overlaps(a, b) {
+  return a.x < b.x + b.width && a.x + a.width > b.x &&
+    a.y < b.y + b.height && a.y + a.height > b.y;
 }
 
-function collideRect(rect1, rect2) {
-  return !(rect2.left > rect1.right ||
-    rect2.right < rect1.left ||
-    rect2.top > rect1.bottom ||
-    rect2.bottom < rect1.top);
+export function removeEntity(list, index) {
+  list[index].element.remove();
+  list.splice(index, 1);
 }
 
-function deleteLaser(lasers, laser, $laser) {
-  const index = lasers.indexOf(laser);
-  lasers.splice(index, 1);
-  $container.removeChild($laser);
+const sounds = {
+  shoot: new Audio('static/sounds/shoot.wav'),
+  hit: new Audio('static/sounds/enemy-death.wav'),
+};
+export function playSound(name) {
+  const sound = sounds[name];
+  sound.currentTime = 0;
+  sound.play().catch(() => { /* Audio restrictions must never interrupt gameplay. */ });
 }
 
-function updateHUD() {
-  document.getElementById("score").textContent = `Score: ${STATE.score}`;
-  document.getElementById("timer").textContent = `Time: ${STATE.time}`;
-  document.getElementById("lives").textContent = `Lives: ${STATE.lives}`;
+export function formatTime(seconds) {
+  const whole = Math.floor(seconds);
+  return `${Math.floor(whole / 60).toString().padStart(2, '0')}:${(whole % 60).toString().padStart(2, '0')}`;
 }

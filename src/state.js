@@ -1,23 +1,10 @@
-const STATE = {
-    x_pos: 0,
-    y_pos: 0,
-    move_right: false,
-    move_left: false,
-    shoot: false,
-    lasers: [],
-    enemyLasers: [],
-    enemies: [],
-    spaceship_width: 40,
-    enemy_width: 50,
+import { ROUND_SECONDS } from './constants.js';
+
+export function createState(mapId) {
+  return {
+    mapId, phase: 'intro', score: 0,
+    elapsed: 0, time: ROUND_SECONDS, lives: 3, enemyDirection: 1,
     cooldown: 0,
-    number_of_enemies: 16,
-    enemy_cooldown: 0,
-    gameOver: false,
-    paused: false,
-    score: 0,
-    time :45,
-    lives: 3,
-    enemyDirection: 1,  
-    dropEnemies: false,
+    player: null, enemies: [], lasers: [], enemyLasers: [], tiles: [],
   };
-  
+}
