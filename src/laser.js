@@ -9,7 +9,8 @@ export function createLaser(state, container, x, y, hostile) {
 
 export function updateLasers(state, dt, hostile) {
   const lasers = hostile ? state.enemyLasers : state.lasers;
-  for (let i = 0; i < lasers.length; i++) {
+  // Reverse iteration permits safe removal; each shot has at most one impact.
+  for (let i = lasers.length - 1; i >= 0; i--) {
     const laser = lasers[i];
     laser.y += (hostile ? ENEMY_LASER_SPEED : -LASER_SPEED) * dt;
     if (laser.y + laser.height < 0 || laser.y > GAME_HEIGHT) {
@@ -17,7 +18,10 @@ export function updateLasers(state, dt, hostile) {
       continue;
     }
     if (hostile && overlaps(laser, state.player)) {
-      state.lives = Math.max(0, state.lives - 1);
+      if (state.invulnerable <= 0) {
+        state.lives = Math.max(0, state.lives - 1);
+        state.invulnerable = 0.9;
+      }
       removeEntity(lasers, i);
       continue;
     }

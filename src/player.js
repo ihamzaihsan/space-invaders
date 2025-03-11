@@ -11,6 +11,8 @@ export function updatePlayer(state, keys, container, dt) {
   const direction = Number(keys.has('ArrowRight')) - Number(keys.has('ArrowLeft'));
   player.x = Math.max(0, Math.min(GAME_WIDTH - player.width, player.x + direction * PLAYER_SPEED * dt));
   state.cooldown = Math.max(0, state.cooldown - dt);
+  state.invulnerable = Math.max(0, state.invulnerable - dt);
+  player.element.classList.toggle('invulnerable', state.invulnerable > 0);
   if (keys.has('Space') && state.cooldown <= 0) {
     createLaser(state, container, player.x + player.width / 2 - 3, player.y - 25, false);
     state.cooldown = 0.28;
