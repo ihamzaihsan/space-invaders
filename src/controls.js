@@ -20,5 +20,9 @@ export function setupControls({ getPhase, start, pause, restart, continueStory }
     }
   });
   window.addEventListener('keyup', event => keys.delete(event.code));
+  window.addEventListener('blur', () => { clear(); if (getPhase() === 'playing') pause(); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { clear(); if (getPhase() === 'playing') pause(); }
+  });
   return { keys, clear };
 }

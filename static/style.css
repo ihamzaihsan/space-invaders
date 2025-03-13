@@ -2,7 +2,7 @@
 * { box-sizing: border-box; }
 body { margin: 0; padding: 24px 16px; }
 [hidden] { display: none !important; }
-.wrap { max-width: 800px; margin: auto; }
+.wrap { max-width: 900px; margin: auto; }
 header { text-align: center; margin-bottom: 20px; }
 h1 { font-size: clamp(28px, 5vw, 42px); letter-spacing: .06em; margin: 6px 0; }
 h2 { margin: 8px 0 16px; font-size: 28px; }
@@ -40,3 +40,10 @@ tr.submitted { background: #183d43; }
 #score-status, #board-status { font-size: 14px; color: #c7eeff; }
 footer { text-align: center; margin-top: 14px; }
 kbd { border: 1px solid #426082; border-radius: 3px; padding: 2px 5px; font: inherit; }
+@media (max-width: 600px) {
+  body { padding: 12px 8px; }
+  .game-wrapper { min-height: 460px; aspect-ratio: auto; }
+  .overlay { padding: 16px; }
+  h2 { font-size: 23px; }
+  .hud { font-size: 13px; padding: 10px; }
+}

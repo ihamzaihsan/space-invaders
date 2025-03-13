@@ -21,6 +21,13 @@ function setPhase(phase) {
   lastTime = null;
   overlay.hidden = phase === 'playing';
   for (const panel of panels) document.getElementById(`${panel}-panel`).hidden = panel !== phase;
+  // Move focus out of hidden menus so held Space cannot activate an old button.
+  if (phase === 'playing') document.activeElement?.blur();
+  else {
+    const target = { intro: 'start-button', pause: 'continue-button', story: 'story-button', end: 'end-restart' }[phase];
+    document.getElementById(target)?.focus({ preventScroll: true });
+    overlay.scrollTop = 0;
+  }
 }
 
 function updateHUD() {
@@ -91,5 +98,9 @@ const controls = setupControls({ getPhase: () => state.phase, start, pause, rest
 document.getElementById('start-button').addEventListener('click', start);
 document.getElementById('continue-button').addEventListener('click', pause);
 document.querySelectorAll('.restart-button').forEach(button => button.addEventListener('click', restart));
+const wrapper = document.querySelector('.game-wrapper');
+new ResizeObserver(() => {
+  document.querySelector('.main').style.transform = `scale(${wrapper.clientWidth / 800})`;
+}).observe(wrapper);
 restart();
 requestAnimationFrame(frame);
