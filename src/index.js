@@ -5,10 +5,12 @@ import { createEnemies, updateEnemies } from './enemy.js';
 import { updateLasers } from './laser.js';
 import { setupControls } from './controls.js';
 import { formatTime } from './utils.js';
+import { Scoreboard } from './scoreboard.js';
 
 const actors = document.getElementById('actors');
 const overlay = document.getElementById('overlay');
 const panels = ['intro', 'pause', 'end'];
+const board = new Scoreboard();
 let state;
 let lastTime = null;
 const selectedMap = { id: 'frontier', name: 'Blue Frontier' };
@@ -24,7 +26,7 @@ function setPhase(phase) {
   // Move focus out of hidden menus so held Space cannot activate an old button.
   if (phase === 'playing') document.activeElement?.blur();
   else {
-    const target = { intro: 'start-button', pause: 'continue-button', story: 'story-button', end: 'end-restart' }[phase];
+    const target = { intro: 'start-button', pause: 'continue-button', story: 'story-button', end: 'player-name' }[phase];
     document.getElementById(target)?.focus({ preventScroll: true });
     overlay.scrollTop = 0;
   }
@@ -39,6 +41,7 @@ function updateHUD() {
 }
 
 function restart() {
+  board.reset();
   state = createState(selectedMap.id);
   actors.replaceChildren();
   state.player = createPlayer(actors);
@@ -61,6 +64,7 @@ function finish(outcome, reason = '') {
   document.getElementById('result-title').textContent = outcome === 'victory' ? 'Mission complete' : 'Game over';
   document.getElementById('conclusion').textContent = outcome === 'victory' ? 'The sector is clear. Well played!' : 'Try again to clear the sector.';
   document.getElementById('result-summary').textContent = `${selectedMap.name} · ${state.score} points · ${formatTime(state.elapsed)} flight time${reason ? ` · ${reason}` : ''}`;
+  board.show({ id: state.runId, score: state.score, time: Number(state.elapsed.toFixed(3)), map: state.mapId, outcome });
 }
 
 function step(dt) {

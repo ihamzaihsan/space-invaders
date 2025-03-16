@@ -27,7 +27,16 @@
         </div>
         <div id="end-panel" class="panel end-panel" hidden>
           <h2 id="result-title"></h2><p id="conclusion"></p><p id="result-summary" class="muted"></p>
-          <button id="end-restart" class="restart-button secondary">New mission · R</button>
+          <form id="score-form">
+            <label for="player-name">Your name for the scoreboard</label>
+            <div class="actions"><input id="player-name" name="name" maxlength="24" required autocomplete="nickname" placeholder="Pilot name"><button id="save-button" type="submit">Save score</button></div>
+          </form>
+          <p id="score-status" role="status" aria-live="polite"></p>
+          <h3>Scoreboard</h3><p class="muted">Highest scores first · five per page · time in minutes:seconds</p>
+          <table><thead><tr><th scope="col">Position</th><th scope="col">Name</th><th scope="col">Score</th><th scope="col">Time</th></tr></thead><tbody id="score-rows"></tbody></table>
+          <p id="board-status" role="status"></p>
+          <div class="pagination"><button id="previous-page" class="secondary" aria-label="Previous scores page">←</button><span id="page-label">Page 1/1</span><button id="next-page" class="secondary" aria-label="Next scores page">→</button><button id="retry-board" class="secondary" hidden>Retry loading</button></div>
+          <button class="restart-button secondary">New mission · R</button><p class="muted">Save before restarting to keep this result.</p>
         </div>
       </section>
     </div>
