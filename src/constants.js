@@ -6,3 +6,4 @@ export const PLAYER_SPEED = 240;
 export const ENEMY_SPEED = 60;
 export const LASER_SPEED = 360;
 export const ENEMY_LASER_SPEED = 140;
+export const STORY_SCORE = 60;

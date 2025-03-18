@@ -1,21 +1,23 @@
-import { ROUND_SECONDS } from './constants.js';
+import { ROUND_SECONDS, STORY_SCORE } from './constants.js';
 import { createState } from './state.js';
 import { createPlayer, updatePlayer } from './player.js';
 import { createEnemies, updateEnemies } from './enemy.js';
 import { updateLasers } from './laser.js';
 import { setupControls } from './controls.js';
 import { formatTime } from './utils.js';
+import { story } from './story.js';
 import { Scoreboard } from './scoreboard.js';
 
 const actors = document.getElementById('actors');
 const overlay = document.getElementById('overlay');
-const panels = ['intro', 'pause', 'end'];
+const panels = ['intro', 'pause', 'story', 'end'];
 const board = new Scoreboard();
 let state;
 let lastTime = null;
 const selectedMap = { id: 'frontier', name: 'Blue Frontier' };
 
-document.getElementById('introduction').textContent = 'Clear all 18 invaders before the 45-second countdown expires. Use the arrow keys to move and hold Space to fire.';
+document.getElementById('introduction').textContent = story.introduction;
+document.getElementById('development').textContent = story.development;
 
 function setPhase(phase) {
   state.phase = phase;
@@ -56,13 +58,13 @@ function pause() {
   if (state.phase === 'playing') setPhase('pause');
   else if (state.phase === 'pause') setPhase('playing');
 }
-function continueStory() {}
+function continueStory() { if (state.phase === 'story') setPhase('playing'); }
 
 function finish(outcome, reason = '') {
   if (state.phase !== 'playing') return;
   setPhase('end');
   document.getElementById('result-title').textContent = outcome === 'victory' ? 'Mission complete' : 'Game over';
-  document.getElementById('conclusion').textContent = outcome === 'victory' ? 'The sector is clear. Well played!' : 'Try again to clear the sector.';
+  document.getElementById('conclusion').textContent = story[outcome];
   document.getElementById('result-summary').textContent = `${selectedMap.name} · ${state.score} points · ${formatTime(state.elapsed)} flight time${reason ? ` · ${reason}` : ''}`;
   board.show({ id: state.runId, score: state.score, time: Number(state.elapsed.toFixed(3)), map: state.mapId, outcome });
 }
@@ -74,6 +76,10 @@ function step(dt) {
   updateLasers(state, dt, true);
   if (invaded || state.lives <= 0) finish('defeat', invaded ? 'Invaders reached the fleet' : 'No lives remaining');
   else if (!state.enemies.length) finish('victory');
+  else if (!state.storyShown && state.score >= STORY_SCORE) {
+    state.storyShown = true;
+    setPhase('story');
+  }
 }
 
 // One animation chain survives pause/restart. Motion is time-based, with small
@@ -101,6 +107,7 @@ function frame(timestamp) {
 const controls = setupControls({ getPhase: () => state.phase, start, pause, restart, continueStory });
 document.getElementById('start-button').addEventListener('click', start);
 document.getElementById('continue-button').addEventListener('click', pause);
+document.getElementById('story-button').addEventListener('click', continueStory);
 document.querySelectorAll('.restart-button').forEach(button => button.addEventListener('click', restart));
 const wrapper = document.querySelector('.game-wrapper');
 new ResizeObserver(() => {

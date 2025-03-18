@@ -18,12 +18,15 @@
       <div class="main" aria-label="Space Invaders playfield"><div id="actors" aria-hidden="true"></div></div>
       <section id="overlay" class="overlay" aria-label="Game menu">
         <div id="intro-panel" class="panel">
-          <span class="eyebrow">MISSION BRIEFING</span><h2>Defend the sector</h2><p id="introduction"></p>
+          <span class="eyebrow">MISSION BRIEFING</span><h2>Earth’s last escort</h2><p id="introduction"></p>
           <button id="start-button">Start mission · Enter</button>
         </div>
         <div id="pause-panel" class="panel" hidden>
           <span class="eyebrow">FLIGHT SUSPENDED</span><h2>Game paused</h2><p>Your time and position are safe.</p>
           <div class="actions"><button id="continue-button">Continue · P</button><button class="secondary restart-button">Restart · R</button></div>
+        </div>
+        <div id="story-panel" class="panel" hidden>
+          <span class="eyebrow">60 POINTS · SIGNAL RECEIVED</span><h2>The corridor is open</h2><p id="development"></p><button id="story-button">Continue mission · Enter</button>
         </div>
         <div id="end-panel" class="panel end-panel" hidden>
           <h2 id="result-title"></h2><p id="conclusion"></p><p id="result-summary" class="muted"></p>
