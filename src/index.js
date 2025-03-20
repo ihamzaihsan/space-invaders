@@ -5,17 +5,26 @@ import { createEnemies, updateEnemies } from './enemy.js';
 import { updateLasers } from './laser.js';
 import { setupControls } from './controls.js';
 import { formatTime } from './utils.js';
+import { maps, renderMap } from './maps.js';
 import { story } from './story.js';
 import { Scoreboard } from './scoreboard.js';
 
 const actors = document.getElementById('actors');
+const mapLayer = document.getElementById('map-layer');
+const mapSelect = document.getElementById('map-select');
 const overlay = document.getElementById('overlay');
 const panels = ['intro', 'pause', 'story', 'end'];
 const board = new Scoreboard();
 let state;
 let lastTime = null;
-const selectedMap = { id: 'frontier', name: 'Blue Frontier' };
+let selectedMap = maps[0];
 
+for (const map of maps) {
+  const option = document.createElement('option');
+  option.value = map.id;
+  option.textContent = map.name;
+  mapSelect.append(option);
+}
 document.getElementById('introduction').textContent = story.introduction;
 document.getElementById('development').textContent = story.development;
 
@@ -46,9 +55,11 @@ function restart() {
   board.reset();
   state = createState(selectedMap.id);
   actors.replaceChildren();
+  state.tiles = renderMap(mapLayer, selectedMap);
   state.player = createPlayer(actors);
   state.enemies = createEnemies(actors);
   document.getElementById('sector').textContent = selectedMap.name;
+  document.getElementById('map-description').textContent = selectedMap.description;
   updateHUD();
   setPhase('intro');
 }
@@ -109,6 +120,11 @@ document.getElementById('start-button').addEventListener('click', start);
 document.getElementById('continue-button').addEventListener('click', pause);
 document.getElementById('story-button').addEventListener('click', continueStory);
 document.querySelectorAll('.restart-button').forEach(button => button.addEventListener('click', restart));
+document.getElementById('change-map-button').addEventListener('click', restart);
+mapSelect.addEventListener('change', () => {
+  selectedMap = maps.find(map => map.id === mapSelect.value) || maps[0];
+  restart();
+});
 const wrapper = document.querySelector('.game-wrapper');
 new ResizeObserver(() => {
   document.querySelector('.main').style.transform = `scale(${wrapper.clientWidth / 800})`;

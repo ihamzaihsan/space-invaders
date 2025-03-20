@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A keyboard-controlled Space Invaders browser recreation with keyboard controls and an invader formation.">
+  <meta name="description" content="A keyboard-controlled Space Invaders browser recreation with story, tile maps, and a persistent scoreboard.">
   <title>Space Invaders: JavaScript Browser Recreation</title>
   <link rel="icon" href="static/img/Player.png">
   <link rel="stylesheet" href="static/style.css">
@@ -15,15 +15,16 @@
       <span id="sector"></span><span id="score">Score: 0</span><span id="timer">Time: 00:45</span><span id="lives">Lives: 3</span>
     </div>
     <div class="game-wrapper">
-      <div class="main" aria-label="Space Invaders playfield"><div id="actors" aria-hidden="true"></div></div>
+      <div class="main" aria-label="Space Invaders playfield"><div id="map-layer" aria-hidden="true"></div><div id="actors" aria-hidden="true"></div></div>
       <section id="overlay" class="overlay" aria-label="Game menu">
         <div id="intro-panel" class="panel">
           <span class="eyebrow">MISSION BRIEFING</span><h2>Earth’s last escort</h2><p id="introduction"></p>
+          <label for="map-select">Choose your sector</label><select id="map-select"></select><p id="map-description" class="muted"></p>
           <button id="start-button">Start mission · Enter</button>
         </div>
         <div id="pause-panel" class="panel" hidden>
           <span class="eyebrow">FLIGHT SUSPENDED</span><h2>Game paused</h2><p>Your time and position are safe.</p>
-          <div class="actions"><button id="continue-button">Continue · P</button><button class="secondary restart-button">Restart · R</button></div>
+          <div class="actions"><button id="continue-button">Continue · P</button><button class="secondary restart-button">Restart · R</button><button id="change-map-button" class="secondary">Change sector</button></div>
         </div>
         <div id="story-panel" class="panel" hidden>
           <span class="eyebrow">60 POINTS · SIGNAL RECEIVED</span><h2>The corridor is open</h2><p id="development"></p><button id="story-button">Continue mission · Enter</button>

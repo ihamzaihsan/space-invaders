@@ -17,6 +17,12 @@ export function updateLasers(state, dt, hostile) {
       removeEntity(lasers, i);
       continue;
     }
+    const tileIndex = state.tiles.findIndex(tile => tile.solid && overlaps(laser, tile));
+    if (tileIndex >= 0) {
+      removeEntity(state.tiles, tileIndex);
+      removeEntity(lasers, i);
+      continue;
+    }
     if (hostile && overlaps(laser, state.player)) {
       if (state.invulnerable <= 0) {
         state.lives = Math.max(0, state.lives - 1);
