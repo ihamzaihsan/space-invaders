@@ -2,6 +2,8 @@
 
 A single-player browser recreation of Space Invaders, built with plain JavaScript and DOM elements. Protect Earth’s evacuation fleet by destroying 18 invaders before a 45-second jump window closes. The game retains the original blue space background, ship sprites, and shooting sounds, with a coordinated mission briefing, HUD, menus, and scoreboard.
 
+**Live Demo:** [View the application](https://space-invaders-topaz.vercel.app)
+
 ![Space Invaders mission briefing with the Blue Frontier sector, invaders, shields, and keyboard controls](docs/images/space-invaders.png)
 
 ## Gameplay
